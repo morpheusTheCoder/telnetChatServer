@@ -77,6 +77,7 @@ function joinARoom(socket, cleanData){
     // console.log("roomNameToAudienceSocketArrayMap= " + roomNameToAudienceSocketArrayMap + "\n");
 
     roomNameToAudienceSocketArrayMap[room].push(socket);
+    user = getUserNameForSocket(socket);
 
     if( typeof userNameToRoomNameMap[user]  !== 'undefined'){
       var i =  roomNameToAudienceSocketArrayMap[userNameToRoomNameMap[user]].indexOf(socket);
@@ -119,7 +120,7 @@ function leaveARoom(socket){
 
 
 
-function broadcaseMessage(socket){
+function broadcaseMessage(socket, data){
 
     // get room
     // get list of users.
@@ -140,7 +141,7 @@ function broadcaseMessage(socket){
 
       if (audience[i] !== socket) {
         audience[i].write( "\r\n");
-        audience[i].write('=>' + user  + " : "+ data);
+        audience[i].write('=>' + user  + " : "+ data + "\n");
         audience[i].write('<=' +  getUserNameForSocket(audience[i]) + ": ");
       }
     }
@@ -206,16 +207,17 @@ function receiveData(socket, data) {
       getListOfRooms(socket);
       break;
 
-    case "/join":
-        joinARoom(socket, cleanData);
-        break;
-
     case "/leave": 
       leaveARoom(socket);
       break;
 
     default: 
-      broadcaseMessage(socket);
+      if(cleanData.lastIndexOf("/join", 0 ) === 0){
+        joinARoom(socket, cleanData);
+      }
+      else {
+        broadcaseMessage(socket, cleanData);
+      }
     }
 
 }
