@@ -15,7 +15,9 @@ var roomNameToAudienceSocketArrayMap = {};
 
 
 
-
+// TODO: Check if I use the same client machine to login again with a different user name , it honours new name.
+// TODO: Check even if there is a single user in system, that user should be able to join any room.
+// TODO: Modularize the code
 
 
 
