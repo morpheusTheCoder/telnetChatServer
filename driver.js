@@ -12,18 +12,9 @@ var userNameToRoomNameMap = {};
 var roomNameToAudienceSocketArrayMap = {};
 
 
-// TODO: make commands case insensitive
-// TODO: detect invalid commands and print error message
-// TODO: 
-
-
-// TODO: Check if I use the same client machine to login again with a different user name , it honours new name.
-// TODO: Check even if there is a single user in system, that user should be able to join any room.
 // TODO: Modularize the code
-
+// TODO: Connect MongoDB to preserve the code.
 // WHEN 2 people are typing, it cutsoff other person's messages.
-
-
 
 
 
@@ -37,34 +28,38 @@ var roomNameToAudienceSocketArrayMap = {};
 
 
 
-function getUserNameForSocket(socket){
+getUserNameForSocket = function (socket){
     return socketNameToUserNameMap['mysocket.' + socket.myId] ;
 }
-
-2
-
-// Cleans the input of carriage return, newline
-function cleanInput(data) {
-  return data.toString().replace(/(\r\n|\n|\r)/gm,"");
-}
- 
-
 
 
 
  // Method executed when data is received from a socket
 function receiveData(socket, data) {
 
-  var cleanData = cleanInput(data);
+  var cleanData = helper.cleanInput(data);
 
   if(typeof  getUserNameForSocket(socket) === 'undefined'){
     assignUserName(socket, cleanData);
     return ; 
   }
 
+/*
+
+if probable command
+  check if valid command
+      if yes, act
+      else, "say you mean a command?"
+
+if not comand, 
+    attempt at broadcast      
+
+*/
 
 
-  switch (cleanData){
+if (cleanData.lastIndexOf("/", 0 ) === 0){
+
+  switch (cleanData.toLowerCase()){
     case "/quit":
       quit(socket);
       break;
@@ -78,13 +73,18 @@ function receiveData(socket, data) {
       break;
 
     default: 
-      if(cleanData.lastIndexOf("/join", 0 ) === 0){
+      if(cleanData.toLowerCase().lastIndexOf("/join", 0 ) === 0){
         joinARoom(socket, cleanData);
       }
       else {
-        broadcaseMessage(socket, cleanData);
+           socket.write("Invalid command:" + cleanData + "/n/r");
+           showPrompt(socket);
       }
     }
+}
+else{
+  broadcaseMessage(socket, cleanData);
+}
 
 }
  
