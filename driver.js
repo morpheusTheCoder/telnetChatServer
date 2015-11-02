@@ -13,7 +13,7 @@ var roomNameToAudienceSocketArrayMap = {};
 
 
 // TODO: Modularize the code
-// TODO: Connect MongoDB to preserve the code.
+// TODO: Connect MongoDB to preserve the code, add search functionality?
 // WHEN 2 people are typing, it cutsoff other person's messages.
 
 
